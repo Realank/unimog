@@ -62,17 +62,27 @@ class _ControlPanelState extends State<ControlPanel> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        children: <Widget>[
-          Text('$speed'),
-          FlatButton(
-              onPressed: () {
-                this.speed = (this.speed + 10) % 0xff;
-                sendData();
-                setState(() {});
-              },
-              child: Text('speed up'))
-        ],
+      body: Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            Text('$speed'),
+            FlatButton(
+                onPressed: () {
+                  this.speed = (this.speed + 10) % 0xff;
+                  sendData();
+                  setState(() {});
+                },
+                child: Text('speed up')),
+            FlatButton(
+                onPressed: () {
+                  this.speed = 0;
+                  sendData();
+                  setState(() {});
+                },
+                child: Text('stop'))
+          ],
+        ),
       ),
     );
   }
