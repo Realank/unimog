@@ -49,7 +49,7 @@ class _ControlPanelState extends State<ControlPanel> {
       List<int> dataToSend = [0xfa, 0x01, speed + 100, direction + 100, 0xfb];
       print('Sending from ${udpSocket.address.address}:${udpSocket.port}');
       final num = udpSocket.send(dataToSend, new InternetAddress('192.168.4.1'), 8888);
-      print('Did send data on the stream.. $num');
+      print('Did send data on the stream.. $num for $dataToSend');
     }
   }
 

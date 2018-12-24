@@ -69,7 +69,10 @@ class _HorizontalStickState extends State<HorizontalStick> {
               child: Text(
                 'UNIMOG',
                 style: TextStyle(
-                    color: Colors.deepOrangeAccent, fontSize: 20, fontWeight: FontWeight.bold),
+                    color: Colors.deepOrangeAccent,
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    fontStyle: FontStyle.italic),
               ),
             ),
           )),
