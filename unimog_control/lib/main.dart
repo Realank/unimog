@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'dart:io';
 import 'package:http/http.dart';
+import 'vertical_stick.dart';
+import 'horizontal_stick.dart';
+import 'panel.dart';
 
 void main() => runApp(MyApp());
 
@@ -34,8 +37,7 @@ class _ControlPanelState extends State<ControlPanel> {
   int direction = 0;
   @override
   void initState() {
-    RawDatagramSocket.bind(InternetAddress.anyIPv4, 0)
-        .then((RawDatagramSocket udpSocket) {
+    RawDatagramSocket.bind(InternetAddress.anyIPv4, 0).then((RawDatagramSocket udpSocket) {
       this.udpSocket = udpSocket;
       setState(() {});
     });
@@ -44,10 +46,9 @@ class _ControlPanelState extends State<ControlPanel> {
 
   void sendData() {
     if (this.udpSocket != null) {
-      List<int> dataToSend = [0xfa, 0x01, speed, direction, 0xfb];
+      List<int> dataToSend = [0xfa, 0x01, speed + 100, direction + 100, 0xfb];
       print('Sending from ${udpSocket.address.address}:${udpSocket.port}');
-      final num =
-          udpSocket.send(dataToSend, new InternetAddress('192.168.4.1'), 8888);
+      final num = udpSocket.send(dataToSend, new InternetAddress('192.168.4.1'), 8888);
       print('Did send data on the stream.. $num');
     }
   }
@@ -61,29 +62,44 @@ class _ControlPanelState extends State<ControlPanel> {
 
   @override
   Widget build(BuildContext context) {
+    double width = MediaQuery.of(context).size.width;
     return Scaffold(
-      body: Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            Text('$speed'),
-            FlatButton(
-                onPressed: () {
-                  this.speed = (this.speed + 10) % 0xff;
-                  sendData();
-                  setState(() {});
-                },
-                child: Text('speed up')),
-            FlatButton(
-                onPressed: () {
-                  this.speed = 0;
-                  sendData();
-                  setState(() {});
-                },
-                child: Text('stop'))
-          ],
+      backgroundColor: Colors.black,
+      body: Row(mainAxisSize: MainAxisSize.max, children: [
+        Container(
+          color: Colors.black,
+          width: width / 4.0,
+          child: VerticalStick((int value) {
+            setState(() {
+              speed = value;
+              sendData();
+            });
+          }),
         ),
-      ),
+        Container(
+            color: Colors.black,
+            width: width / 8 * 3,
+            child: DashBoard(
+              direction: direction,
+              speed: speed,
+              stopCallback: () {
+                this.speed = 0;
+                this.direction = 0;
+                sendData();
+                setState(() {});
+              },
+            )),
+        Container(
+          color: Colors.black,
+          width: width * 3 / 8,
+          child: HorizontalStick((value) {
+            setState(() {
+              direction = value;
+              sendData();
+            });
+          }),
+        ),
+      ]),
     );
   }
 }
