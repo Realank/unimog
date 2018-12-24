@@ -40,7 +40,6 @@ class SteerPart extends CustomPainter {
       ..style = PaintingStyle.fill
       ..color = Colors.yellowAccent;
 
-    print('paint $size');
     Path path = Path();
     path.addRect(Rect.fromPoints(Offset(size.width / 2, 15),
         Offset(size.width / 2 - percent / 100 * size.width / 2, size.height - 15)));

@@ -65,7 +65,7 @@ class DashBoard extends StatelessWidget {
               child: Center(
                 child: Text('Reset',
                     style:
-                        TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
+                        TextStyle(color: Colors.grey, fontSize: 20, fontWeight: FontWeight.bold)),
               ),
             )),
         Expanded(child: Container()),
