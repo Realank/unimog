@@ -61,11 +61,11 @@ class DashBoard extends StatelessWidget {
               width: 80,
               height: 34,
               decoration:
-                  BoxDecoration(color: Colors.grey, borderRadius: BorderRadius.circular(10)),
+                  BoxDecoration(color: Colors.grey[800], borderRadius: BorderRadius.circular(10)),
               child: Center(
                 child: Text('Reset',
-                    style:
-                        TextStyle(color: Colors.grey, fontSize: 20, fontWeight: FontWeight.bold)),
+                    style: TextStyle(
+                        color: Colors.grey[400], fontSize: 20, fontWeight: FontWeight.bold)),
               ),
             )),
         Expanded(child: Container()),
