@@ -9,13 +9,13 @@ void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
-  Future<Response> fetchPost() {
-    return get('https://www.baidu.com');
-  }
+//  Future<Response> fetchPost() {
+//    return get('https://www.baidu.com');
+//  }
 
   @override
   Widget build(BuildContext context) {
-    fetchPost();
+//    fetchPost();
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
@@ -37,7 +37,8 @@ class _ControlPanelState extends State<ControlPanel> {
   int direction = 0;
   @override
   void initState() {
-    RawDatagramSocket.bind(InternetAddress.anyIPv4, 0).then((RawDatagramSocket udpSocket) {
+    RawDatagramSocket.bind(InternetAddress.anyIPv4, 0)
+        .then((RawDatagramSocket udpSocket) {
       this.udpSocket = udpSocket;
       setState(() {});
     });
@@ -46,9 +47,27 @@ class _ControlPanelState extends State<ControlPanel> {
 
   void sendData() {
     if (this.udpSocket != null) {
-      List<int> dataToSend = [0xfa, 0x01, speed + 100, direction + 100, 0xfb];
+      //directionNum > 0 left
+      int speedLeftFeed = speed == 0 ? 0 : (-direction ~/ 10);
+      int speedRightFeed = speed == 0 ? 0 : (direction ~/ 10);
+      double multiDirectLeft = direction == 0 ? 1 : (direction > 0 ? 0.9 : 0.8);
+      double multiDirectRight =
+          direction == 0 ? 1 : (direction > 0 ? 0.8 : 0.9);
+      int speedNum = speed + 100;
+      double directionLeftNum = direction * multiDirectLeft + 100;
+      double directionRightNum = direction * multiDirectRight + 100;
+      List<int> dataToSend = [
+        0xfa,
+        0x01,
+        speedNum + speedLeftFeed, //left speed
+        speedNum + speedRightFeed, //right speed
+        directionLeftNum.toInt(), //left steel
+        directionRightNum.toInt(), //right steel
+        0xfb
+      ];
       print('Sending from ${udpSocket.address.address}:${udpSocket.port}');
-      final num = udpSocket.send(dataToSend, new InternetAddress('192.168.4.1'), 8888);
+      final num =
+          udpSocket.send(dataToSend, new InternetAddress('192.168.4.1'), 8888);
       print('Did send data on the stream.. $num for $dataToSend');
     }
   }

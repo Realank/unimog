@@ -13,7 +13,7 @@ int servoRightPin = 4;
 Servo servoLeft;
 Servo servoRight;
 int initLeftServoAngle = 87;
-int initRightServoAngle = 105;
+int initRightServoAngle = 102;//越小越左
 void setup() {
   servoLeft.attach(servoLeftPin);
   servoLeft.write(initLeftServoAngle);
@@ -52,34 +52,43 @@ void loop() {
     {
       incomingPacket[len] = 0; //末尾补0结束字符串
       Serial.printf("UDP packet contents: %s\n", incomingPacket);
-      if(incomingPacket[0] == 0xfa && incomingPacket[4] == 0xfb) {
+      if(incomingPacket[0] == 0xfa && incomingPacket[6] == 0xfb) {
         if(incomingPacket[1] == 0x01) {
-          int speed = incomingPacket[2] - 100;
-          int direction = incomingPacket[3] - 100;
-          Serial.printf("UDP speed: %d\n", speed);
-          if(speed == 0 ) {
+          int speedLeft = incomingPacket[2] - 100;
+          int speedRight = incomingPacket[3] - 100;
+          int directionLeft = incomingPacket[4] - 100;
+          int directionRight = incomingPacket[5] - 100;
+          Serial.printf("UDP speed: %d + %d\n", speedLeft,speedRight);
+          if(speedLeft == 0 ) {
             analogWrite(motorLeft1Pin, 0);
             analogWrite(motorLeft2Pin, 0);
-            analogWrite(motorRight1Pin, 0);
-            analogWrite(motorRight2Pin, 0);
-          } else if (speed > 0) {
-            analogWrite(motorLeft1Pin, speed * 1023 / 100);
-            analogWrite(motorRight1Pin, speed * 1023 / 100);
+          } else if (speedLeft > 0) {
+            analogWrite(motorLeft1Pin, speedLeft * 1023 / 110);
             analogWrite(motorLeft2Pin, 0 );
-            analogWrite(motorRight2Pin, 0);
           } else {
             analogWrite(motorLeft1Pin, 0 );
-            analogWrite(motorRight1Pin, 0);
-            analogWrite(motorLeft2Pin, -speed * 1023 / 100);
-            analogWrite(motorRight2Pin, -speed * 1023 / 100);
+            analogWrite(motorLeft2Pin, -speedLeft * 1023 / 110);
           }
-          Serial.printf("UDP direction: %d\n", direction);
-          if(direction == 0) {
+          if(speedRight == 0 ) {
+            analogWrite(motorRight1Pin, 0);
+            analogWrite(motorRight2Pin, 0);
+          } else if (speedRight > 0) {
+            analogWrite(motorRight1Pin, speedRight * 1023 / 110);
+            analogWrite(motorRight2Pin, 0);
+          } else {
+            analogWrite(motorRight1Pin, 0);
+            analogWrite(motorRight2Pin, -speedRight * 1023 / 110);
+          }
+          Serial.printf("UDP direction: %d + %d\n", directionLeft, directionRight);
+          if(directionLeft == 0) {
             servoLeft.write(initLeftServoAngle);
+          } else {
+            servoLeft.write(initLeftServoAngle - directionLeft * 25 / 110);
+          }
+          if(directionRight == 0) {
             servoRight.write(initRightServoAngle);
           } else {
-            servoLeft.write(initLeftServoAngle - direction * 40 / 100);
-            servoRight.write(initRightServoAngle - direction * 40 / 100);
+            servoRight.write(initRightServoAngle - directionRight * 25 / 110);
           }
           
          
