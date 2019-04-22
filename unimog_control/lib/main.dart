@@ -17,7 +17,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
 //    fetchPost();
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'RC Realank',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
@@ -35,10 +35,10 @@ class _ControlPanelState extends State<ControlPanel> {
   RawDatagramSocket udpSocket;
   int speed = 0;
   int direction = 0;
+  bool useFeed = false;
   @override
   void initState() {
-    RawDatagramSocket.bind(InternetAddress.anyIPv4, 0)
-        .then((RawDatagramSocket udpSocket) {
+    RawDatagramSocket.bind(InternetAddress.anyIPv4, 0).then((RawDatagramSocket udpSocket) {
       this.udpSocket = udpSocket;
       setState(() {});
     });
@@ -48,11 +48,10 @@ class _ControlPanelState extends State<ControlPanel> {
   void sendData() {
     if (this.udpSocket != null) {
       //directionNum > 0 left
-      int speedLeftFeed = speed == 0 ? 0 : (-direction ~/ 10);
-      int speedRightFeed = speed == 0 ? 0 : (direction ~/ 10);
-      double multiDirectLeft = direction == 0 ? 1 : (direction > 0 ? 0.9 : 0.8);
-      double multiDirectRight =
-          direction == 0 ? 1 : (direction > 0 ? 0.8 : 0.9);
+      int speedLeftFeed = (speed == 0 || !useFeed) ? 0 : (-direction ~/ 10);
+      int speedRightFeed = (speed == 0 || !useFeed) ? 0 : (direction ~/ 10);
+      double multiDirectLeft = (direction == 0 || !useFeed) ? 1 : (direction > 0 ? 0.9 : 0.8);
+      double multiDirectRight = (direction == 0 || !useFeed) ? 1 : (direction > 0 ? 0.8 : 0.9);
       int speedNum = speed + 100;
       double directionLeftNum = direction * multiDirectLeft + 100;
       double directionRightNum = direction * multiDirectRight + 100;
@@ -66,8 +65,7 @@ class _ControlPanelState extends State<ControlPanel> {
         0xfb
       ];
       print('Sending from ${udpSocket.address.address}:${udpSocket.port}');
-      final num =
-          udpSocket.send(dataToSend, new InternetAddress('192.168.4.1'), 8888);
+      final num = udpSocket.send(dataToSend, new InternetAddress('192.168.4.1'), 8888);
       print('Did send data on the stream.. $num for $dataToSend');
     }
   }
@@ -101,10 +99,15 @@ class _ControlPanelState extends State<ControlPanel> {
             child: DashBoard(
               direction: direction,
               speed: speed,
+              useFeed: useFeed,
               stopCallback: () {
                 this.speed = 0;
                 this.direction = 0;
                 sendData();
+                setState(() {});
+              },
+              useFeedCallback: (useFeed) {
+                this.useFeed = useFeed;
                 setState(() {});
               },
             )),
