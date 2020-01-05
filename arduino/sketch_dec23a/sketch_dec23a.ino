@@ -12,8 +12,8 @@ int servoLeftPin = 0;
 int servoRightPin = 4;
 Servo servoLeft;
 Servo servoRight;
-int initLeftServoAngle = 87;
-int initRightServoAngle = 102;//越小越左
+int initLeftServoAngle = 91;
+int initRightServoAngle = 86;//越小越左
 void setup() {
   servoLeft.attach(servoLeftPin);
   servoLeft.write(initLeftServoAngle);
