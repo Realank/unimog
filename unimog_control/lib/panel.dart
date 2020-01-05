@@ -3,12 +3,20 @@ import 'digital_number.dart';
 import 'steer_view.dart';
 
 typedef DashBoardStopCallback = void Function();
+typedef UseFeedCallback = void Function(bool useFeed);
 
 class DashBoard extends StatelessWidget {
   final int direction;
   final int speed;
+  final bool useFeed;
   final DashBoardStopCallback stopCallback;
-  DashBoard({@required this.direction, @required this.speed, this.stopCallback});
+  final UseFeedCallback useFeedCallback;
+  DashBoard(
+      {@required this.direction,
+      @required this.speed,
+      @required this.useFeed,
+      this.stopCallback,
+      this.useFeedCallback});
   @override
   Widget build(BuildContext context) {
     int speedNum = this.speed > 0 ? this.speed : -this.speed;
@@ -68,6 +76,22 @@ class DashBoard extends StatelessWidget {
                         color: Colors.grey[400], fontSize: 20, fontWeight: FontWeight.bold)),
               ),
             )),
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            Switch(
+                value: this.useFeed,
+                inactiveTrackColor: Colors.grey,
+                activeColor: Colors.red,
+                onChanged: (value) {
+                  this.useFeedCallback(value);
+                }),
+            Text(
+              '补偿',
+              style: TextStyle(color: Colors.white),
+            ),
+          ],
+        ),
         Expanded(child: Container()),
       ],
     );

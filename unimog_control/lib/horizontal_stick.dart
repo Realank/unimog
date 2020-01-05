@@ -67,7 +67,7 @@ class _HorizontalStickState extends State<HorizontalStick> {
               decoration:
                   BoxDecoration(color: Color(0xff3e3e3e), borderRadius: BorderRadius.circular(10)),
               child: Text(
-                'UNIMOG',
+                'REALANK',
                 style: TextStyle(
                     color: Colors.deepOrangeAccent,
                     fontSize: 20,
